@@ -28,15 +28,27 @@
             }
         }
         stage('plan') { 
+            when{
+                expression {
+                    params.action == 'Apply'
+                }
+            }
             steps {
                 sh 'echo This is Test'
                 sh 'sleep 10'
             }
         }
         stage('Deploy') { 
-            steps {
-                sh 'echo This is deploy' 
-            }
+              when{
+                expression {
+                    params.action == 'Destroy'
+                }
+                steps {
+                sh """
+                cd 01-vpc
+                terraform destroy -auto-approve
+                """ 
+                }
         }
     
   }
