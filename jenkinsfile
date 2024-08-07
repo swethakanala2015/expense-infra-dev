@@ -7,7 +7,7 @@ pipeline {
         disableConcurrentBuilds()
     }
    
-    }
+    }   
     stages {
         stage('Init') {
             steps {
