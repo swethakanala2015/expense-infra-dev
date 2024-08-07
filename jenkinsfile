@@ -5,6 +5,7 @@ pipeline {
     options {
         timeout(time: 30, unit: 'MINUTES')
         disableConcurrentBuilds()
+        ansicolor('Xterm')
     }
    
     }
@@ -16,9 +17,9 @@ pipeline {
                 """
             }
         }
-        stage('Test') {
+        stage('plan') {
             steps {
-                sh 'echo This is Test'
+                sh 'echo This is plan'
             }
         }
         stage('Deploy') {
