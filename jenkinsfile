@@ -5,70 +5,65 @@ pipeline {
     options {
         timeout(time: 30, unit: 'MINUTES')
         disableConcurrentBuilds()
-        ansicolor('xterm')
+        ansiColor('xterm')
     }
-     parameters {
+    parameters {
         choice(name: 'action', choices: ['Apply', 'Destroy'], description: 'Pick something')
-    }    
+    }
     stages {
         stage('Init') {
             steps {
-                sh """
+               sh """
                 cd 01-vpc
                 terraform init -reconfigure
-                """
+               """
             }
         }
-        stage('plan') {
-            when{
+        stage('Plan') {
+            when {
                 expression{
                     params.action == 'Apply'
                 }
             }
             steps {
-               sh """
+                sh """
                 cd 01-vpc
                 terraform plan
                 """
             }
         }
         stage('Deploy') {
-             when{
+            when {
                 expression{
                     params.action == 'Apply'
                 }
-             }
-             input{
-                message "should we continue?" 
-                ok "yes, we should"
-             }
-                
+            }
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
             }
             steps {
-                 sh """
+                sh """
+                cd 01-vpc
+                terraform apply -auto-approve
+                """
+            }
+        }
+
+        stage('Destroy') {
+            when {
+                expression{
+                    params.action == 'Destroy'
+                }
+            }
+            steps {
+                sh """
                 cd 01-vpc
                 terraform destroy -auto-approve
                 """
             }
         }
     }
-
-            stage('Destroy') {
-             when{
-                expression{
-                    params.action == 'Destroy'
-                }
-             }
-                
-            }
-            steps {
-                 sh """
-                cd 01-vpc
-                terraform destroy -auto-approve
-                """
-            }
-        
-    
     post { 
         always { 
             echo 'I will always say Hello again!'
@@ -81,5 +76,5 @@ pipeline {
             echo 'I will run when pipeline is failure'
         }
     }
-    
+}
 
